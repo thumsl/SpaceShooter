@@ -1,0 +1,42 @@
+void bossFight() {
+	SDL_Event e;
+	int key_pressed = SDLK_a;
+
+	SDL_Window *menuWindow = SDL_CreateWindow("Menu", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+	WIDTH, HEIGHT, SDL_WINDOW_OPENGL); // | SDL_WINDOW_FULLSCREEN_DESKTOP
+	SDL_Renderer * renderer = SDL_CreateRenderer(menuWindow, -1, 0);
+
+	TTF_Font *sixty = TTF_OpenFont("data/misc/sixty.ttf", 50);
+	TTF_Font *arial = TTF_OpenFont("data/misc/arial.ttf", 16);
+	SDL_Color color = {84, 84, 84};
+	SDL_Color white = {255, 255, 255};
+ 	
+	int levelW = 0, levelH = 0;
+	SDL_Surface *levelSurface = TTF_RenderText_Solid(sixty, "Boss Fight!", color);
+	SDL_Texture *levelTexture = SDL_CreateTextureFromSurface(renderer, levelSurface);
+	SDL_QueryTexture(levelTexture, NULL, NULL, &levelW, &levelH);
+	SDL_Rect levelRect = {(WIDTH-levelW)/2, (HEIGHT-levelH)/2, levelW, levelH};
+
+	int continueW = 0, continueH = 0;
+	SDL_Surface *continueSurface = TTF_RenderText_Solid(arial, "Press Escape to continue.", white);
+	SDL_Texture *continueTexture = SDL_CreateTextureFromSurface(renderer, continueSurface);
+	SDL_QueryTexture(continueTexture, NULL, NULL, &continueW, &continueH);
+	SDL_Rect continueRect = {(WIDTH-continueW)/2, (HEIGHT-levelH)/2+levelH+25, continueW, continueH};	
+
+	while (key_pressed != SDLK_ESCAPE) {
+		SDL_PollEvent(&e);
+		if (e.type == SDL_KEYDOWN)
+			 key_pressed = e.key.keysym.sym;
+		SDL_RenderCopy(renderer, levelTexture, NULL, &levelRect);
+		SDL_RenderCopy(renderer, continueTexture, NULL, &continueRect);
+		SDL_RenderPresent(renderer);
+	}
+
+	SDL_DestroyTexture(levelTexture);
+	SDL_DestroyTexture(continueTexture);
+	SDL_FreeSurface(levelSurface);
+	SDL_FreeSurface(continueSurface);
+	TTF_CloseFont(sixty);
+	TTF_CloseFont(arial);
+	SDL_DestroyWindow(menuWindow);
+}
